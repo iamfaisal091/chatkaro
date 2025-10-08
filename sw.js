@@ -1,7 +1,7 @@
-const CACHE_NAME = 'chatshub-v1';
+const CACHE_NAME = 'whattchat-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
+  '/chatkaro.pages.dev/',
   '/manifest.json',
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js',
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js',
