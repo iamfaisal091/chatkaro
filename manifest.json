@@ -1,8 +1,8 @@
 {
-  "name": "Chatshub",
-  "short_name": "Chatshub",
+  "name": "whattchat",
+  "short_name": "whattchat",
   "description": "A WhatsApp-like chat app to connect with friends",
-  "start_url": "/index.html",
+  "start_url": "/chatkaro.pages.dev",
   "display": "standalone",
   "background_color": "#f0f2f5",
   "theme_color": "#075E54",
