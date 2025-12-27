@@ -1,6 +1,6 @@
 {
-  "name": "whattchat",
-  "short_name": "whattchat",
+  "name": "chatkaro",
+  "short_name": "chatkaro",
   "description": "A WhatsApp-like chat app to connect with friends",
   "start_url": "/chatkaro.pages.dev",
   "display": "standalone",
