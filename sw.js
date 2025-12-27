@@ -1,4 +1,4 @@
-const CACHE_NAME = 'whattchat-v1';
+const CACHE_NAME = 'chatkaro-v1';
 const urlsToCache = [
   '/',
   '/chatkaro.pages.dev/',
