@@ -2,138 +2,64 @@
 <html lang="en">
 <head>
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#075e54">
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log("PWA Active!"))
-      .catch((err) => console.log("PWA Error", err));
-  }
-</script>
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/615/615075.png">
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>ChatHub</title>
+<meta name="theme-color" content="#075e54">
+<title>ChatHub Pro Fixed</title>
 <style>
   :root { --wa-green: #075e54; --wa-light: #25d366; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-  
-  /* dvh use karne se keyboard khulne par bhi footer dikhega */
-  body { 
-    background: #dadbd3; 
-    height: 100vh; 
-    height: 100dvh; 
-    width: 100vw;
-    display: flex; 
-    overflow: hidden; 
-  }
-
-  #login { width: 100%; max-width: 400px; margin: auto; background: white; padding: 40px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 100; }
+  body { background: #dadbd3; height: 100dvh; width: 100vw; display: flex; overflow: hidden; }
+  #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 2000; }
+  #login { display: none; width: 100%; max-width: 400px; margin: auto; background: white; padding: 40px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
   .g-btn { width: 100%; padding: 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-top: 20px; }
-
   #app { display: none; width: 100%; height: 100%; background: white; }
   .container { display: flex; height: 100%; width: 100%; position: relative; }
-
-  /* SIDEBAR */
-  .sidebar { 
-    width: 30%; min-width: 300px; border-right: 1px solid #ddd; 
-    display: flex; flex-direction: column; background: white; 
-  }
-  .sidebar-header { background: #ededed; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+  .sidebar { width: 30%; min-width: 300px; border-right: 1px solid #ddd; display: flex; flex-direction: column; background: white; }
+  .sidebar-header { background: #ededed; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; flex-shrink: 0; }
   .chat-list { flex: 1; overflow-y: auto; }
   .chat-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f6f6f6; }
-  .avatar { width: 45px; height: 45px; border-radius: 50%; background: #075e54; margin-right: 12px; overflow: hidden; flex-shrink: 0; }
+  .group-item { background: #e7f3ef; border-bottom: 2px solid var(--wa-light); }
+  .avatar { width: 45px; height: 45px; border-radius: 50%; background: #eee; margin-right: 12px; overflow: hidden; flex-shrink: 0; }
   .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-  /* CHAT WINDOW FIX */
-  .chat-window { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    background: #e5ddd5 url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); 
-    background-size: contain;
-    height: 100%;
-    overflow: hidden;
-  }
-
+  .chat-window { flex: 1; display: flex; flex-direction: column; background: #e5ddd5 url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: contain; height: 100%; overflow: hidden; position: relative; }
   .chat-header { background: #ededed; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #ddd; flex-shrink: 0; height: 60px; }
   .back-btn { display: none; font-size: 24px; margin-right: 10px; cursor: pointer; color: var(--wa-green); }
-  
-  #msg-container { 
-    flex: 1; 
-    padding: 15px; 
-    overflow-y: auto; 
-    display: flex; 
-    flex-direction: column; 
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* YAHAN HAI MAIN FIX: FOOTER */
-  .chat-footer { 
-    background: #f0f0f0; 
-    padding: 8px 12px; 
-    display: flex; 
-    align-items: center; 
-    border-top: 1px solid #ddd; 
-    flex-shrink: 0; 
-    width: 100%;
-    min-height: 60px;
-    padding-bottom: env(safe-area-inset-bottom); /* iPhone notch fix */
-  }
-  .chat-footer input { 
-    flex: 1; 
-    padding: 10px 15px; 
-    border-radius: 20px; 
-    border: 1px solid #ccc; 
-    outline: none; 
-    margin: 0 8px; 
-    font-size: 16px; /* 16px se mobile zoom nahi karega */
-    background: white;
-  }
-  .send-btn { 
-    background: var(--wa-green); 
-    color: white; 
-    border: none; 
-    width: 42px; 
-    height: 42px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .bubble { max-width: 80%; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; }
+  #msg-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+  .bubble { max-width: 80%; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; }
+  .sender-name { font-size: 11px; font-weight: bold; color: #e91e63; display: block; margin-bottom: 2px; }
   .sent { align-self: flex-end; background: #dcf8c6; }
   .received { align-self: flex-start; background: white; }
-
+  .chat-footer { background: #f0f0f0; padding: 8px 12px; display: flex; align-items: center; border-top: 1px solid #ddd; flex-shrink: 0; min-height: 60px; padding-bottom: env(safe-area-inset-bottom); }
+  .chat-footer input { flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; margin: 0 8px; font-size: 16px; background: white; }
+  .send-btn { background: var(--wa-green); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   @media (max-width: 768px) {
     .sidebar { width: 100%; position: absolute; left: 0; top: 0; z-index: 5; }
-    .chat-window { 
-      position: absolute; 
-      width: 100%; 
-      height: 100%; 
-      left: 0; 
-      top: 0; 
-      transform: translateX(100%); 
-      z-index: 20; 
-      transition: transform 0.25s ease-out;
-    }
+    .chat-window { position: absolute; width: 100%; height: 100%; left: 0; top: 0; transform: translateX(100%); z-index: 20; transition: transform 0.25s ease-out; }
     .chat-active .chat-window { transform: translateX(0); }
     .back-btn { display: block; }
   }
 </style>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('Service Worker Registered!'))
+        .catch(err => console.log('Service Worker Failed!', err));
+    });
+  }
+</script>
+
 </head>
 <body>
 
+<div id="loading-screen"><h3>Loading ChatHub...</h3></div>
+
 <div id="login">
-  <h2 style="color:var(--wa-green)">ChatHub</h2>
-  <button class="g-btn" onclick="signIn()">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" style="margin-right:10px">
-    Google Login
-  </button>
+  <h2 style="color:var(--wa-green)">ChatHub Pro</h2>
+  <button class="g-btn" onclick="signIn()">Google Login</button>
 </div>
 
 <div id="app">
@@ -143,20 +69,23 @@
         <strong id="my-name">ChatHub</strong>
         <span onclick="logout()" style="color:red; cursor:pointer; font-size: 12px;">Logout</span>
       </div>
-      <div id="chat-list" class="chat-list"></div>
+      <div class="chat-list">
+        <div class="chat-item group-item" onclick="openChat('boys_group_global', 'Boys Group', 'https://cdn-icons-png.flaticon.com/512/615/615075.png', true)">
+          <div class="avatar"><img src="https://cdn-icons-png.flaticon.com/512/615/615075.png"></div>
+          <div><strong>Boys Group</strong><br><small id="group-online-count" style="color:var(--wa-green)">0 Online</small></div>
+        </div>
+        <div id="users-area"></div>
+      </div>
     </div>
-
     <div class="chat-window">
       <div class="chat-header">
         <span class="back-btn" onclick="toggleChat(false)">←</span>
         <div id="h-avatar" class="avatar" style="width:35px; height:35px; margin-right:10px;"></div>
-        <div id="h-name" style="font-weight:bold; font-size: 16px;">Contact</div>
+        <div id="h-name" style="font-weight:bold">Contact</div>
       </div>
-      
       <div id="msg-container"></div>
-
       <div class="chat-footer">
-        <input type="text" id="msgInput" placeholder="Message..." autocomplete="off">
+        <input type="text" id="msgInput" placeholder="Type a message..." autocomplete="off">
         <button class="send-btn" onclick="sendMsg()">➤</button>
       </div>
     </div>
@@ -165,8 +94,8 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, setDoc, doc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, setDoc, doc, onSnapshot, query, where, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBxydVqg4yuXrG_YBqoeuh1irSQ8xdhGJk",
@@ -182,28 +111,32 @@
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  let me = "", currentChat = "";
-
-  setPersistence(auth, browserLocalPersistence);
+  let me = "", myName = "", currentChat = "", isGroupChat = false, msgUnsub = null;
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       me = user.uid;
+      myName = user.displayName || user.email.split('@')[0];
       document.getElementById("login").style.display = "none";
       document.getElementById("app").style.display = "block";
-      const uName = user.displayName || user.email.split('@')[0];
-      document.getElementById("my-name").innerText = uName;
-      await setDoc(doc(db, "users", me), { name: uName, photo: user.photoURL, online: true, uid: me }, { merge: true });
+      document.getElementById("my-name").innerText = myName;
+      updateStatus(true);
       loadUsers();
+      listenOnlineCount();
     } else {
       document.getElementById("login").style.display = "block";
       document.getElementById("app").style.display = "none";
     }
+    document.getElementById("loading-screen").style.display = "none";
   });
+
+  async function updateStatus(status) {
+    if(me) await setDoc(doc(db, "users", me), { online: status, lastSeen: Date.now() }, { merge: true });
+  }
 
   window.signIn = () => signInWithPopup(auth, provider);
   window.logout = async () => {
-    if(me) await setDoc(doc(db, "users", me), { online: false }, { merge: true });
+    await updateStatus(false);
     signOut(auth).then(() => location.reload());
   };
 
@@ -211,60 +144,108 @@
     document.getElementById("mainBox").classList.toggle("chat-active", show);
   };
 
+  function listenOnlineCount() {
+    onSnapshot(query(collection(db, "users"), where("online", "==", true)), snap => {
+      document.getElementById("group-online-count").innerText = snap.size + " Online";
+    });
+  }
+
   function loadUsers() {
     onSnapshot(collection(db, "users"), snap => {
-      const list = document.getElementById("chat-list");
+      const list = document.getElementById("users-area");
       list.innerHTML = "";
       snap.forEach(d => {
         if (d.id !== me) {
           const u = d.data();
           const div = document.createElement("div");
           div.className = "chat-item";
-          div.innerHTML = `
-            <div class="avatar"><img src="${u.photo || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'"></div>
-            <div><strong>${u.name}</strong><br><small style="color:#888">${u.lastMsg || 'Tap to chat'}</small></div>
-          `;
-          div.onclick = () => openChat(d.id, u.name, u.photo);
+          div.innerHTML = `<div class="avatar"><img src="${u.photo || 'https://via.placeholder.com/50'}"></div>
+                           <div><strong>${u.name}</strong><br>
+                           <small style="${u.online ? 'color:green' : 'color:#888'}">${u.online ? 'Online' : 'Offline'}</small></div>`;
+          div.onclick = () => openChat(d.id, u.name, u.photo, false);
           list.appendChild(div);
         }
       });
     });
   }
 
-  function openChat(id, name, photo) {
-    currentChat = [me, id].sort().join("_");
+  window.openChat = function(id, name, photo, groupMode) {
+    isGroupChat = groupMode;
+    currentChat = isGroupChat ? id : [me, id].sort().join("_");
     document.getElementById("h-name").innerText = name;
-    document.getElementById("h-avatar").innerHTML = `<img src="${photo || 'https://via.placeholder.com/50'}">`;
+    document.getElementById("h-avatar").innerHTML = `<img src="${photo}">`;
     window.toggleChat(true);
+    
+    // 1. Sabse pehle local storage se data nikaalo aur dikhao
+    const rawData = localStorage.getItem("cache_" + currentChat);
+    if (rawData) {
+        try {
+            const cachedMsgs = JSON.parse(rawData);
+            console.log("Offline data loaded:", cachedMsgs.length);
+            renderMessages(cachedMsgs); // Offline mein bhi dikhega
+        } catch (e) {
+            console.error("Cache error", e);
+        }
+    }
+
+    // 2. Ab background mein online server se connect karo
     listenMsgs();
+};
+
+function listenMsgs() {
+    if(msgUnsub) msgUnsub();
+    
+    const q = query(
+      collection(db, "messages"), 
+      where("chat", "==", currentChat),
+      limit(50) 
+    );
+
+    msgUnsub = onSnapshot(q, (snap) => {
+        if (snap.empty && !navigator.onLine) return; // Offline ho toh storage wala hi rehne do
+
+        let msgs = [];
+        snap.forEach(d => msgs.push(d.data()));
+
+        // Client side sorting
+        msgs.sort((a, b) => a.time - b.time);
+
+        // 3. Database se naya data aate hi local storage ko overwrite karo
+        if (msgs.length > 0) {
+            localStorage.setItem("cache_" + currentChat, JSON.stringify(msgs));
+            renderMessages(msgs);
+        }
+    }, (err) => {
+        console.log("Working in offline mode or error:", err.message);
+        // Error aane par (jaise offline) purana data hi dikhate raho
+    });
+}
+
+  function renderMessages(msgs) {
+    const container = document.getElementById("msg-container");
+    container.innerHTML = "";
+    msgs.forEach(m => {
+      const div = document.createElement("div");
+      div.className = `bubble ${m.sender === me ? 'sent' : 'received'}`;
+      let nameTag = (isGroupChat && m.sender !== me) ? `<span class="sender-name">${m.senderName}</span>` : "";
+      div.innerHTML = `${nameTag}${m.text}`;
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
   }
 
   window.sendMsg = async () => {
     const val = msgInput.value.trim();
     if(!val || !currentChat) return;
     const txt = val;
-    msgInput.value = ""; // Pehle clear karo UI fast feel hoga
-    await addDoc(collection(db, "messages"), { chat: currentChat, text: txt, sender: me, time: Date.now() });
-    await setDoc(doc(db, "users", me), { lastMsg: "You: " + txt }, { merge: true });
+    msgInput.value = "";
+    await addDoc(collection(db, "messages"), { 
+      chat: currentChat, text: txt, sender: me, senderName: myName, time: Date.now() 
+    });
   };
 
   msgInput.onkeypress = (e) => { if(e.key === "Enter") window.sendMsg(); };
 
-  function listenMsgs() {
-    const q = query(collection(db, "messages"), where("chat", "==", currentChat), orderBy("time", "asc"));
-    onSnapshot(q, snap => {
-      const container = document.getElementById("msg-container");
-      container.innerHTML = "";
-      snap.forEach(d => {
-        const m = d.data();
-        const div = document.createElement("div");
-        div.className = `bubble ${m.sender === me ? 'sent' : 'received'}`;
-        div.innerText = m.text;
-        container.appendChild(div);
-      });
-      container.scrollTop = container.scrollHeight;
-    });
-  }
 </script>
 </body>
 </html>
