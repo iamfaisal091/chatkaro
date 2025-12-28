@@ -1,22 +1,15 @@
 {
-  "name": "chatkaro",
-  "short_name": "chatkaro",
-  "description": "A WhatsApp-like chat app to connect with friends",
-  "start_url": "/chatkaro.pages.dev",
-  "display": "standalone",
-  "background_color": "#f0f2f5",
-  "theme_color": "#075E54",
+  "short_name": "ChatHub",
+  "name": "ChatHub Pro - Community",
   "icons": [
     {
-      "src": "/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/615/615075.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "scope": "/"
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#075e54",
+  "background_color": "#ffffff"
 }
